@@ -29,10 +29,10 @@ class WorkingHours:
         self.date2 = date2
         self.work_timing = work_timing
         self.lunch_time = lunch_time
-        self.weekends = self._get_weekends(self.work_timing)
+        self.weekend = self._get_weekend(self.work_timing)
         self.holidays = self._get_holidays(holidays)
 
-    def _get_weekends(self, work_timing):
+    def _get_weekend(self, work_timing):
         """
         Returns a list of days for the weekend according to the work time
         """
@@ -61,7 +61,7 @@ class WorkingHours:
         """
         Returns the working time for a day
         """
-        if weekday in self.weekends:
+        if weekday in self.weekend:
             return self.work_timing[MON]
         return self.work_timing[weekday]
 
@@ -69,10 +69,19 @@ class WorkingHours:
         """
         Returns the total hours of a given work time
         """
-        if work_time[1] <= self.lunch_time[0] or work_time[0] >= self.lunch_time[1]:
-            return work_time[1] - work_time[0]
+        lunch = self.lunch_time
+        wt = work_time
 
-        return (self.lunch_time[0] - work_time[0]) + (work_time[1] - self.lunch_time[1])
+        # Work time period is before or after lunch time?
+        if wt[1] <= lunch[0] or wt[0] >= lunch[1]:
+            return wt[1] - wt[0]
+
+        # Any work time hour is between lunch time?
+        between_lunch = filter(lambda h: h > lunch[0] and h < lunch[1], wt)
+        if between_lunch:
+            return wt[1] - wt[0]
+
+        return (lunch[0] - wt[0]) + (wt[1] - lunch[1])
 
     def get_hours(self):
         """
@@ -111,7 +120,7 @@ class WorkingHours:
                 days -= 1
                 temp = temp + timedelta(days=1)
 
-                if temp.weekday() in self.weekends or temp.date() in self.holidays:
+                if temp.weekday() in self.weekend or temp.date() in self.holidays:
                     continue
 
                 work_time = self._get_working_time_by_weekday(temp.weekday())
@@ -122,10 +131,17 @@ class WorkingHours:
 
 
 if __name__ == '__main__':
-    # Simple test
-    date1 = datetime(2013, 12, 23, 9, 0)
-    date2 = datetime(2013, 12, 31, 16, 0)
+    # Simple tests
+    date1 = datetime(2013, 1, 23, 9, 0)
+    date2 = datetime(2013, 1, 23, 12, 30)
 
     wh = WorkingHours(date1, date2)
+    hours = wh.get_hours()
+    print hours
+
+    date3 = datetime(2013, 1, 23, 10, 0)
+    date4 = datetime(2013, 1, 23, 13, 30)
+
+    wh = WorkingHours(date3, date4)
     hours = wh.get_hours()
     print hours
