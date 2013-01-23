@@ -12,26 +12,35 @@ class WorkingHours:
     HOLIDAYS.
     """
     WORK_TIMING = {
-        MON: (9, 18.5),
-        TUE: (9, 18.5),
-        WED: (9, 18.5),
-        THU: (9, 18.5),
-        FRI: (9, 18.5),
+        MON: (9, 18),
+        TUE: (9, 18),
+        WED: (9, 18),
+        THU: (9, 18),
+        FRI: (9, 18),
     }
     LUNCH_TIME = [13, 14]
-    WEEKENDS = (SAT, SUN)
     HOLIDAYS = [
         (12, 25) # Christmas!
     ]
 
     def __init__(self, date1, date2, work_timing=WORK_TIMING,
-                 lunch_time=LUNCH_TIME, weekends=WEEKENDS, holidays=HOLIDAYS):
+                 lunch_time=LUNCH_TIME, holidays=HOLIDAYS):
         self.date1 = date1
         self.date2 = date2
         self.work_timing = work_timing
         self.lunch_time = lunch_time
-        self.weekends = weekends
+        self.weekends = self._get_weekends(self.work_timing)
         self.holidays = self._get_holidays(holidays)
+
+    def _get_weekends(self, work_timing):
+        """
+        Returns a list of days for the weekend according to the work time
+        """
+        week_days = [MON, TUE, WED, THU, FRI, SAT, SUN]
+        working_days = set(work_timing.keys())
+        weekend = [day for day in week_days if day not in working_days]
+        return weekend
+
 
     def _get_holidays(self, holidays):
         """
