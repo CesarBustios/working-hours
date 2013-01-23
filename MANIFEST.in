@@ -1,5 +1,5 @@
 include workinghours.py
 include tests.py
 include AUTHOR
-include UNLICENSE
+include LICENSE
 include CHANGELOG.rst

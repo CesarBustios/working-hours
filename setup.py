@@ -7,6 +7,6 @@ setup(
     author='César Bustíos',
     author_email='cesarbustios@gmail.com',
     url='http://pypi.python.org/pypi/WorkingHours/',
-    license='Unlicense License',
+    license='BSD License',
     description='Calculate working hours between two dates',
 )
